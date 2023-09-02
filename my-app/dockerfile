@@ -1,0 +1,30 @@
+FROM golang:latest AS build-env
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+
+RUN go env -w GOPROXY=https://goproxy.cn,https://goproxy.io,direct
+
+ENV GO111MODULE=on
+
+RUN go mod download
+
+COPY . .
+# COPY ./main.go ./
+# COPY ./api/proto/ ./api/proto/
+# COPY ./internal/module/ ./internal/module/
+# COPY ./internal/jaeger/ ./internal/jaeger/
+# COPY ./pkg/broker/ ./pkg/broker/
+
+RUN go build -o ./main
+
+# FROM alpine:latest
+
+# WORKDIR /app
+
+# COPY --from=build-env /app/main . 
+
+EXPOSE 5052
+
+CMD ["./main"]
